@@ -4,68 +4,36 @@ from PIL import Image
 import os
 
 '''
-采用神经网络识别苹果，训练集为分辨率196pixel×196pixel的10张苹果图片
+采用神经网络识别苹果，训练集由分辨率均为196pixel×196pixel的10张苹果图片组成
+程序测试表明：归一化、赋初值、学习率的设定是影响收敛与否的关键因素
 '''
 
-# 加载训练集并进行预处理
-def load_image_train(dir_train):
-	infile = dir_train
-	names = os.listdir(infile)
-	num = len(names)
-	train_set_x_orig = np.zeros([num,196,196,3])  # 用于存储所有训练集中的图片
-	train_set_y = np.array([1,1,1,1,1,1,1,1,1])  # 表示训练集中的图片都是苹果，y=1
+# 加载图片，生成训练集或测试集，并对数据进行预处理
+def load_image_data(dir_data):
+	names = os.listdir(dir_data)
+	data_set_x_orig = np.zeros([len(names),196,196,3])  # 用于存储所有图片数据集
 
+	# （1）获取数据集-4维数据
 	index = 0
-
-	# （1）获取训练数据集-4维数据
 	for img_name in (names):
-		if os.path.splitext(img_name)[1] == '.jpg':
-			img = Image.open(infile + '\\' + img_name)
-			img_arr = np.array(img)
-
-			train_set_x_orig[index] = img_arr
+		if os.path.splitext(img_name)[1] == '.jpg':  # 仅选择.jpg格式的图片
+			img = Image.open(dir_data + '\\' + img_name)
+			data_set_x_orig[index] = np.array(img)
+                        
 			index = index + 1
-			print('img shape = ', img_arr.shape, 'img info = ', img.info, 'img_width=', img.width, 'img_height=',img.width)
+			print('data_set shape = ', data_set_x_orig.shape, 'img size = ', img.size, 'img_dpi=', img.info['dpi'])
                         
 			#plt.imshow(img_arr)
 			#plt.show()
                         
-	# （2）重塑训练数据集-2维数据
-	train_set_x_orig_flatten = train_set_x_orig.reshape(train_set_x_orig.shape[0],-1).T
+	# （2）重塑数据集-2维数据
+	data_set_x_orig_flatten = data_set_x_orig.reshape(data_set_x_orig.shape[0],-1).T
 
-	# （3）标准化训练数据集-2维数据
-	train_set_x = train_set_x_orig_flatten/555
+	# （3）标准化数据集-2维数据
+	data_set_x = data_set_x_orig_flatten/255
 	
-	return train_set_x, train_set_y
+	return data_set_x
 
-# 加载测试集并进行预处理
-def load_image_test(dir_test):
-	infile = dir_test
-	names = os.listdir(infile)
-	num = len(names)
-	test_set_x_orig = np.zeros([num,196,196,3])  # 用于存储所有训练集中的图片
-	test_set_y = np.array([0,1,0,0,0,1,1,1,1])  # 表示测试集中的图片不全是苹果，y=1
-	index = 0
-
-	# （1）获取测试数据集-4维数据
-	for img_name in (names):
-		if os.path.splitext(img_name)[1] == '.jpg':
-			img = Image.open(infile + '\\' + img_name)
-			img_arr = np.array(img)
-			test_set_x_orig[index] = img_arr
-			index = index + 1
-			print('img shape = ', img_arr.shape, 'img info = ', img.info)
-			
-			#plt.imshow(img_arr)
-			#plt.show()
-			
-	# （2）重塑测试数据集-2维数据
-	test_set_x_orig_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0],-1).T
-
-	# （3）标准化测试数据集-2维数据
-	test_set_x = test_set_x_orig_flatten/555
-	
-	return test_set_x, test_set_y
 
 # 逻辑回归函数: sigmoid
 
@@ -314,8 +282,9 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations = 100, learning_rate 
 
 
 if __name__ == '__main__':
-	X_train, Y_train = load_image_train("D:\\Program Files\\GitHub\\deep_learning\\apple_train")
-	X_test, Y_test = load_image_test("D:\\Program Files\\GitHub\\deep_learning\\apple_test")
-	print('X_train=',X_train.shape, '\n X_test=', X_test.shape)
-
-	model(X_train, Y_train, X_test, Y_test, num_iterations = 2000, learning_rate = 0.005, print_cost = False)
+    X_train = load_image_data("apple_train")
+    Y_train = np.array([0,1,1,1,0,1,1,1,1])
+    X_test = load_image_data("apple_test")
+    Y_test = np.array([1,1,0,0,0,1,1,1,1])
+    print('X_train=',X_train.shape, '\n X_test=', X_test.shape)
+    model(X_train, Y_train, X_test, Y_test, num_iterations = 1000, learning_rate = 0.003, print_cost = False)
