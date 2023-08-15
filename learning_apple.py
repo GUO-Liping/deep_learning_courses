@@ -283,7 +283,7 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations = 100, learning_rate 
 
 if __name__ == '__main__':
     X_train = load_image_data("apple_train")
-    Y_train = np.array([0,1,1,1,0,1,1,1,1])
+    Y_train = np.array([0,1,0,1,0,1,1,1,1])
     X_test = load_image_data("apple_test")
     Y_test = np.array([1,1,0,0,0,1,1,1,1])
     print('X_train=',X_train.shape, '\n X_test=', X_test.shape)
