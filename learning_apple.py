@@ -11,29 +11,44 @@ import os
 
 # 加载图片，生成训练集或测试集，并对数据进行预处理
 def load_image_data(dir_data):
-	names = os.listdir(dir_data)
-	data_set_x_orig = np.zeros([len(names),196,196,3])  # 用于存储所有图片数据集
+    """
+    This function load the image database and create data set of numpy arrays
 
-	# （1）获取数据集-4维数据
-	index = 0
-	for img_name in (names):
-		if os.path.splitext(img_name)[1] == '.jpg':  # 仅选择.jpg格式的图片
-			img = Image.open(dir_data + '\\' + img_name)
-			data_set_x_orig[index] = np.array(img)
-                        
-			index = index + 1
-			print('data_set shape = ', data_set_x_orig.shape, 'img size = ', img.size, 'img_dpi=', img.info['dpi'])
-                        
-			#plt.imshow(img_arr)
-			#plt.show()
-                        
-	# （2）重塑数据集-2维数据
-	data_set_x_orig_flatten = data_set_x_orig.reshape(data_set_x_orig.shape[0],-1).T
+    Argument:
+    names -- a set of image names in dir_data
+    data_set_x_orig -- initialized numpy array for storing all images
+    img -- image opened by PIL library
+    index -- from 0 to number of names
+    data_set_x_orig_flatten -- flatten numpy array of data_set_x_orig
 
-	# （3）标准化数据集-2维数据
-	data_set_x = data_set_x_orig_flatten/255
-	
-	return data_set_x
+    Return：
+    data_set_x_normalized -- normalized numpy array of data_set_x_orig_flatten
+    """
+
+    names = os.listdir(dir_data)
+    data_set_x_orig = np.zeros([len(names),196,196,3]) 
+
+    # (1)Get data set - 4 dimentional
+    index = 0
+    
+    for img_name in (names):
+        if os.path.splitext(img_name)[1] == '.jpg':  # only for images with .jpg
+            img = Image.open(dir_data + '\\' + img_name)
+            data_set_x_orig[index] = np.array(img)
+                        
+            index = index + 1
+            print('data_set shape = ', data_set_x_orig.shape, 'img size = ', img.size, 'img_dpi=', img.info['dpi'])
+                        
+            #plt.imshow(img_arr)
+            #plt.show()
+                        
+    # (2)Reshape data set - 2 dimensional
+    data_set_x_orig_flatten = data_set_x_orig.reshape(data_set_x_orig.shape[0],-1).T
+
+    # (3) Normalize data set - 2 dimensional
+    data_set_x_normalized = data_set_x_orig_flatten/255
+     
+    return data_set_x_normalized
 
 
 # Graded function: sigmoid
@@ -266,10 +281,13 @@ if __name__ == '__main__':
 
     # Get the model parameters
     print('X_train=',X_train.shape, '\n X_test=', X_test.shape)
-    apple_model = model(X_train, Y_train, X_test, Y_test, num_iterations = 2000, learning_rate = 0.003, print_cost = False)
+    apple_model = model(X_train, Y_train, X_test, Y_test, num_iterations = 1000, learning_rate = 0.005, print_cost = False)
     costs_model = apple_model["costs"]
     num_iterations =  apple_model["num_iterations"]
 
-    # plot the costs with respect to num_iteration
+    # Plot learning curve (with costs)
     plt.plot(np.arange(num_iterations/100),costs_model)
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per hundreds)')
+    plt.title("Learning rate =" + str(apple_model["learning_rate"]))
     plt.show()
