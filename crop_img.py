@@ -1,3 +1,4 @@
+# crop images
 from PIL import Image as ImagePIL
 import os
 infile = "cat\\5.jpg"

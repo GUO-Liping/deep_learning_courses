@@ -30,7 +30,7 @@ def load_image_data(dir_data):
 
     # (1)Get data set - 4 dimentional
     index = 0
-    
+
     for img_name in (names):
         if os.path.splitext(img_name)[1] == '.jpg':  # only for images with .jpg
             img = Image.open(dir_data + '\\' + img_name)
@@ -167,14 +167,14 @@ def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
         # update rule
         w = w - learning_rate * dw
         b = b - learning_rate * db
-        print('loop = ', i,'dw=',dw[0], 'db=',db, 'cost =', cost )
+        #print('loop = ', i,'dw=',dw[0], 'db=',db, 'cost =', cost )
 
         # Record the costs
-        if i % 100 == 0:
+        if i % 1 == 0:
             costs.append(cost)
         
-        # Print the cost every 100 training examples
-        if print_cost and i % 100 == 0:
+        # Print the cost every 1 training examples
+        if print_cost and i % 1 == 0:
             print ("Cost after iteration %i: %f" %(i, cost))
     
     params = {"w": w,
@@ -253,7 +253,6 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations = 100, learning_rate 
     # Predict test/train set examples
     Y_prediction_train = predict(w, b, X_train)
     Y_prediction_test = predict(w, b, X_test)
-    print('Y_prediction_train=',Y_prediction_train, 'Y_prediction_test=',Y_prediction_test)
 
     # Print train/test Errors
     print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y_train)) * 100))
@@ -267,8 +266,6 @@ def model(X_train, Y_train, X_test, Y_test, num_iterations = 100, learning_rate 
          "learning_rate" : learning_rate,
          "num_iterations": num_iterations}
     
-    print('w=', w, '\n', 'b=',b)
-
     return d
 
 
@@ -281,13 +278,13 @@ if __name__ == '__main__':
 
     # Get the model parameters
     print('X_train=',X_train.shape, '\n X_test=', X_test.shape)
-    apple_model = model(X_train, Y_train, X_test, Y_test, num_iterations = 1000, learning_rate = 0.005, print_cost = False)
+    apple_model = model(X_train, Y_train, X_test, Y_test, num_iterations = 1000, learning_rate = 0.0001, print_cost = True)
     costs_model = apple_model["costs"]
     num_iterations =  apple_model["num_iterations"]
 
     # Plot learning curve (with costs)
-    plt.plot(np.arange(num_iterations/100),costs_model)
+    plt.plot(np.arange(num_iterations/1),costs_model)
     plt.ylabel('cost')
-    plt.xlabel('iterations (per hundreds)')
+    plt.xlabel('iterations ')
     plt.title("Learning rate =" + str(apple_model["learning_rate"]))
     plt.show()
