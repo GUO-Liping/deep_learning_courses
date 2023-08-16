@@ -1,3 +1,4 @@
+# batch images
 from PIL import Image as ImagePIL
 import os
 
