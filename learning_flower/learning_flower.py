@@ -308,7 +308,6 @@ def predict(parameters, X):
     return predictions
 
 
-
 def predict_test_case():
     np.random.seed(1)
     X_assess = np.random.randn(2, 3)
