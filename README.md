@@ -521,7 +521,7 @@ $$
 n_y=1
 $$
 
-### 2.3 正向传播
+### 2.3 正向传播过程
 
 #### （1）正向传播流程
 
@@ -648,9 +648,9 @@ $$
 
 
 
-### 2.6 反向传播
+### 2.4 反向传播过程
 
-目前，大多数教程中并未对深度学习正向传播、反向传播的理论过程进行规范化的整理与表达。因此，本节根据矩阵微分相关的运算法则，参考《矩阵分析与应用（第2版）》—张贤达，对深度学习反向传播过程进行梳理，并阐释符合数学规范的表达方式。
+目前，大多数教程中并未对深度学习正向传播、反向传播的理论过程进行规范化的整理与表达。因此，本节根据矩阵微分相关的运算法则（Jacobian矩阵），参考《矩阵分析与应用（第2版）》—张贤达，对深度学习反向传播过程进行梳理，并阐释符合数学规范的表达方式。
 
 #### （1）反向传播流程
 
@@ -670,7 +670,17 @@ $$
 \frac{\partial J}{\partial \boldsymbol{B}^{[2]}} = \frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{B}^{[2]}}
 $$
 
-首先，计算代价函数$J$的对$\boldsymbol{A}^{[2]}$的偏导数
+计算代价函数$J$对$\boldsymbol{W}^{[1]}$的偏导数
+$$
+\frac{\partial J}{\partial \boldsymbol{W}^{[1]}} = \frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{A}^{[1]}} \frac{\partial \boldsymbol{A}^{[1]}}{\partial \boldsymbol{Z}^{[1]}} \frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{W}^{[1]}}
+$$
+
+计算代价函数$J$对$\boldsymbol{B}^{[1]}$的偏导数
+$$
+\frac{\partial J}{\partial \boldsymbol{B}^{[1]}} = \frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{A}^{[1]}} \frac{\partial \boldsymbol{A}^{[1]}}{\partial \boldsymbol{Z}^{[1]}} \frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{B}^{[1]}}
+$$
+
+第一步，计算代价函数$J$的对$\boldsymbol{A}^{[2]}$的偏导数
 $$
 \begin{eqnarray}
 \frac{\partial J}{\partial \boldsymbol{A}^{[2]}}
@@ -693,7 +703,7 @@ $$
 \right]
 \end{eqnarray}
 $$
-其次，计算$\boldsymbol{A}^{[2]}$对$\boldsymbol{Z}^{[2]}$的偏导数
+第二步，计算$\boldsymbol{A}^{[2]}$对$\boldsymbol{Z}^{[2]}$的偏导数
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}}
@@ -722,7 +732,7 @@ $$
 $$
 其中，$\sigma(z) = \frac{1}{1+e^{-z}}$。
 
-激活函数的偏导数项：
+第三步，计算$\boldsymbol{Z}^{[2]}$对$\boldsymbol{W}^{[2]}$的偏导数
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{W}^{[2]}}
@@ -751,7 +761,7 @@ a_{1m}^{[1]} & a_{2m}^{[1]} & \cdots & a_{n_hm}^{[1]}\\
 (\boldsymbol{A}^{[1]})^T
 \end{eqnarray}
 $$
-线性组合的偏导数项
+同时，计算$\boldsymbol{Z}^{[2]}$对$\boldsymbol{B}^{[2]}$的偏导数
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{B}^{[2]}}
@@ -781,7 +791,7 @@ $$
 \end{eqnarray}
 $$
 
-其中，$\boldsymbol{A}^{[1]T}_{:,i}$为矩阵$\boldsymbol{A}^{[1]}$第$i$列的转置，是一个与$\boldsymbol{W}^{[2]}$形状、元素数量相同的行向量。
+第四步，计算$\boldsymbol{Z}^{[2]}$对$\boldsymbol{A}^{[1]}$的偏导数:
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{A}^{[1]}}
@@ -810,7 +820,7 @@ w_1^{[2]} & w_2^{[2]} & w_3^{[2]} & w_4^{[2]} &0 & 0 & 0 & 0 & \cdots & 0 & 0 & 
 
 \end{eqnarray}
 $$
-z2对a1继续求导
+第五步，计算$\boldsymbol{A}^{[1]}$$对$$\boldsymbol{Z}^{[1]}$的偏导数:
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{A}^{[1]}}{\partial \boldsymbol{Z}^{[1]}}
@@ -845,7 +855,7 @@ $$
 
 \end{eqnarray}
 $$
-a1对z1继续求导
+第六步，计算$\boldsymbol{Z}^{[1]}$$对$$\boldsymbol{W}^{[1]}$的偏导数:
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{W}^{[1]}}
@@ -883,7 +893,7 @@ x_1^{(m)} & \cdots & 0 & x_2^{(m)} & \cdots & 0\\
 
 \end{eqnarray}
 $$
-z1对w1求导
+同时，计算$\boldsymbol{Z}^{[1]}$$对$$\boldsymbol{B}^{[1]}$的偏导数:
 $$
 \begin{eqnarray}
 \frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{B}^{[1]}}
@@ -921,10 +931,76 @@ $$
 
 \end{eqnarray}
 $$
-z1对b1求导。
+最后，根据链式法则分别计算
+
+代价函数$J$对$\boldsymbol{W}^{[2]}$的偏导数
 $$
-\frac{\partial}{\partial b^{[2](i)}} z^{[2](i)}(w^{[2]},b^{[2](i)}) = 1
+\frac{\partial J}{\partial \boldsymbol{W}^{[2]}}
+=
+\left[\frac{\partial J}{\partial \boldsymbol{W}^{[2]}} \right]_{n_y \times n_h}
+=
+\left[\frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \right]_{n_y \times m}
+\left[\frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \right]_{m \times m}
+\left[\frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{W}^{[2]}} \right]_{m \times n_h}
 $$
+
+代价函数$J$对$\boldsymbol{B}^{[2]}$的偏导数
+$$
+\frac{\partial J}{\partial \boldsymbol{B}^{[2]}}
+=
+\left[\frac{\partial J}{\partial \boldsymbol{B}^{[2]}} \right]_{n_y \times m}
+= 
+\left[\frac{\partial J}{\partial \boldsymbol{A}^{[2]}}  \right]_{n_y \times m}
+\left[\frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \right]_{m \times m} 
+\left[\frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{B}^{[2]}} \right]_{m \times m}
+$$
+
+代价函数$J$对$\boldsymbol{W}^{[1]}$的偏导数
+$$
+\begin{eqnarray}
+\frac{\partial J}{\partial \boldsymbol{W}^{[1]}}
+&\Leftarrow&
+\left[\frac{\partial J}{\partial \boldsymbol{W}^{[1]}} \right]_{n_y \times n_hn_x}
+\\
+&=&
+\left[\frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \right]_{n_y \times m} 
+\left[\frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \right]_{m \times m} 
+\left[\frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{A}^{[1]}} \right]_{m \times mn_h}
+\left[\frac{\partial \boldsymbol{A}^{[1]}}{\partial \boldsymbol{Z}^{[1]}} \right]_{mn_h \times mn_h} 
+\left[\frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{W}^{[1]}} \right]_{mn_h \times n_hn_x}
+\end{eqnarray}
+$$
+
+注意：由于矩阵函数的微分运算定义存在多种方式，本文采用Jacobian矩阵的形式对矩阵函数进行了微分运算，这一过程对矩阵进行了向量化（列向量化$\text{vec}$）过程。因此，最终的微分矩阵需要对计算结果进一步通过矩阵化（矩阵化$\text{vec}$）。
+$$
+\frac{\partial J}{\partial \boldsymbol{W}^{[1]}}
+=
+\text{unvec}_{n_h,n_x}
+\left[\frac{\partial J}{\partial \boldsymbol{W}^{[1]}} \right]_{n_y \times n_hn_x}
+$$
+代价函数$J$对$\boldsymbol{B}^{[1]}$的偏导数
+$$
+\begin{eqnarray}
+\frac{\partial J}{\partial \boldsymbol{B}^{[1]}}
+&\Leftarrow&
+\left[\frac{\partial J}{\partial \boldsymbol{B}^{[1]}} \right]_{n_y \times mn_h}
+\\&=&
+\left[\frac{\partial J}{\partial \boldsymbol{A}^{[2]}} \right]_{n_y \times m} 
+\left[\frac{\partial \boldsymbol{A}^{[2]}}{\partial \boldsymbol{Z}^{[2]}} \right]_{m \times m} 
+\left[\frac{\partial \boldsymbol{Z}^{[2]}}{\partial \boldsymbol{A}^{[1]}} \right]_{m \times mn_h} 
+\left[\frac{\partial \boldsymbol{A}^{[1]}}{\partial \boldsymbol{Z}^{[1]}} \right]_{mn_h \times mn_h} 
+\left[\frac{\partial \boldsymbol{Z}^{[1]}}{\partial \boldsymbol{B}^{[1]}} \right]_{mn_h \times mn_h}
+\end{eqnarray}
+$$
+
+同样地，
+$$
+\frac{\partial J}{\partial \boldsymbol{B}^{[1]}}
+=
+\text{unvec}_{n_h,m}
+\left[\frac{\partial J}{\partial \boldsymbol{B}^{[1]}} \right]_{n_y \times mn_h}
+$$
+
 
 ### 2.5 激活函数的导数
 
@@ -986,7 +1062,7 @@ $$
 \end{array}
 \right.
 $$
-注意：当实际程序中出现z=0时，可赋值Leaky ReLU函数的导数值为0.01或1。
+注意：当实际程序中出现$z=0$时，可赋值Leaky ReLU函数的导数值为0.01或1。
 
 ## 3.深层神经网络
 
