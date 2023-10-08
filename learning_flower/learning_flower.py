@@ -187,6 +187,9 @@ def backward_propagation(parameters, cache, X, Y):
     dZ2= A2 - Y
     dW2 = 1 / m * np.dot(dZ2,A1.T)
     db2 = 1 / m * np.sum(dZ2,axis=1,keepdims=True)
+    print('db2=',db2)
+    print('dZ2=',dZ2)
+
     dZ1 = np.dot(W2.T,dZ2) * (1-np.power(A1,2))
     dW1 = 1 / m * np.dot(dZ1,X.T)
     db1 = 1 / m * np.sum(dZ1,axis=1,keepdims=True)
