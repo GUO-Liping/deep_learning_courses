@@ -186,9 +186,7 @@ def backward_propagation(parameters, cache, X, Y):
     # Backward propagation: calculate dW1, db1, dW2, db2. 
     dZ2= A2 - Y
     dW2 = 1 / m * np.dot(dZ2,A1.T)
-    db2 = 1 / m * np.sum(dZ2,axis=1,keepdims=True)
-    print('db2=',db2)
-    print('dZ2=',dZ2)
+    db2 = 1 / m * np.sum(dZ2)
 
     dZ1 = np.dot(W2.T,dZ2) * (1-np.power(A1,2))
     dW1 = 1 / m * np.dot(dZ1,X.T)
@@ -350,8 +348,8 @@ def plot_decision_boundary(model, X, y):
 
 if __name__ == '__main__':
     X, Y = load_planar_dataset() 
-    plt.scatter(X[0, :], X[1, :], c=Y.reshape(X[0,:].shape), s=40, cmap=plt.cm.Spectral)
-    plt.show()
+    #plt.scatter(X[0, :], X[1, :], c=Y.reshape(X[0,:].shape), s=40, cmap=plt.cm.Spectral)
+
     # Build a model with a n_h-dimensional hidden layer
     parameters = nn_model(X, Y, n_h = 4, num_iterations = 1000, print_cost=True)
 
